@@ -54,7 +54,7 @@ See `.env` for model config and API keys.
 
 ---
 
-## 🛡️ Security
+## Security
 
 - Raw documents and vector stores are excluded from Git
 - No data is sent to external APIs unless explicitly configured
