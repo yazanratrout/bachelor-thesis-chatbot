@@ -1,5 +1,5 @@
 
-# Confidential Document Chatbot
+# Inofrmation Retrieval Chatbot
 
 A closed-domain chatbot that answers questions from internal documentation using:
 - Semantic Search (Sentence Transformers + FAISS)
