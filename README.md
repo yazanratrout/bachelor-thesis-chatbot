@@ -1,16 +1,16 @@
 
-# 📚 Confidential Document Chatbot
+# Confidential Document Chatbot
 
 A closed-domain chatbot that answers questions from internal documentation using:
-- ✅ Semantic Search (Sentence Transformers + FAISS)
-- ✂️ Extractive Summarization
-- ⚙️ Python (FastAPI) backend
-- 💬 React frontend
-- 🔐 Private document handling
+- Semantic Search (Sentence Transformers + FAISS)
+- Extractive Summarization
+- Python (FastAPI) backend
+- React frontend
+- Private document handling
 
 ---
 
-## 📦 Project Structure
+## Project Structure
 
 ```
 backend/
@@ -29,7 +29,7 @@ data/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Backend
 ```bash
@@ -49,7 +49,7 @@ npm run dev
 
 ---
 
-## 🔐 .env Example
+## .env Example
 See `.env` for model config and API keys.
 
 ---
