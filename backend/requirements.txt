@@ -4,3 +4,5 @@ python-dotenv
 sentence-transformers
 transformers
 faiss-cpu
+PyMuPDF
+nltk
