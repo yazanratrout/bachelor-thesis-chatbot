@@ -1,0 +1,5 @@
+[INFO] Loading PDF: backend/documents/onboarding.pdf
+[INFO] Text loaded with length of: 38239 characters
+[INFO] Chunking text
+[INFO] Generated 60 chunks
+[INFO] Embedding chunks
