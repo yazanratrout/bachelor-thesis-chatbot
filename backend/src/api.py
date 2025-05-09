@@ -1,9 +1,8 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
-from .chatbot import answer_query
+from src.data_loader.embedding_store import search
 
 app = FastAPI()
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -12,7 +11,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/ask")
-def ask(query: str):
-    answer = answer_query(query)
-    return {"answer": answer}
+@app.get("/search")
+def search_endpoint(query: str = Query(..., min_length=1)):
+    results = search(query)
+    return {"query": query, "results": results}
