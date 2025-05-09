@@ -3,7 +3,7 @@ from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
 import os
-import pickle
+import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,34 +17,35 @@ logging.basicConfig(
     handlers=[console_logger, file_logger]
 )
 
-model_name = "sentence-transformers/all-MiniLM-L6-v2"
+model_name = "multi-qa-MiniLM-L6-cos-v1"
 embedding_model = SentenceTransformer(model_name)
 VECTOR_STORE_PATH = "backend/vector_store/"
 os.makedirs(VECTOR_STORE_PATH, exist_ok=True)
 
 def build_vector_store(chunks):
     logger.info("Embedding chunks")
-    embeddings = embedding_model.encode(chunks, convert_to_numpy=True)
-
+    embeddings = embedding_model.encode(chunks, convert_to_numpy=True, show_progress_bar=True)
+    faiss.normalize_L2(embeddings)
     dimension = embeddings.shape[1]
-    index = faiss.IndexFlatL2(dimension)
+    index = faiss.IndexFlatIP(dimension)
     index.add(embeddings)
     faiss.write_index(index, os.path.join(VECTOR_STORE_PATH, "vector.index"))
 
-    with open(os.path.join(VECTOR_STORE_PATH, "chunks.pkl"), "wb") as f:
-        pickle.dump(chunks, f)
+    with open(os.path.join(VECTOR_STORE_PATH, "chunks.json"), "w", encoding="utf-8") as f:
+        json.dump(chunks, f, ensure_ascii=False, indent=2)
+    logger.info("Vector store and chunks saved.")
 
 def load_vector_store():
     index = faiss.read_index(os.path.join(VECTOR_STORE_PATH, "vector.index"))
-    with open(os.path.join(VECTOR_STORE_PATH, "chunks.pkl"), "rb") as f:
-        chunks = pickle.load(f)
+    with open(os.path.join(VECTOR_STORE_PATH, "chunks.json"), "r", encoding="utf-8") as f:
+        chunks = json.load(f)
     return index, chunks
 
 def search(query, top_k=5):
     index, chunks = load_vector_store()
     query_embedding = embedding_model.encode([query], convert_to_numpy=True)
+    faiss.normalize_L2(query_embedding)
     D, I = index.search(query_embedding, top_k)
-
     results = [chunks[i] for i in I[0]]
     return results
 

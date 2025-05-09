@@ -31,7 +31,7 @@ def load_pdf(file_path):
     cleaned_text = text.replace("\n\n", "\n").strip()
     return cleaned_text
 
-def chunk_text(text, sentences_per_chunk=5):
+def chunk_text(text, sentences_per_chunk=3):
     sentences = sent_tokenize(text)
     chunks = []
     for i in range(0, len(sentences), sentences_per_chunk):
@@ -39,7 +39,7 @@ def chunk_text(text, sentences_per_chunk=5):
         chunks.append(chunk)
     return chunks
 
-def preprocess_pdf(file_path, sentences_per_chunk=5):
+def preprocess_pdf(file_path, sentences_per_chunk=3):
     logger.info(f"Loading PDF: {file_path}")
     text = load_pdf(file_path)
     logger.info(f"Text loaded with length of: {len(text)} characters")
@@ -52,6 +52,6 @@ def preprocess_pdf(file_path, sentences_per_chunk=5):
 
 if __name__ == "__main__":
     path = "backend/documents/onboarding.pdf"
-    chunks = preprocess_pdf(path, sentences_per_chunk=5)
+    chunks = preprocess_pdf(path, sentences_per_chunk=3)
     print("\nFirst chunk preview:")
     print(chunks[0])

@@ -1,5 +1,7 @@
+[WARNING] Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
 [INFO] Loading PDF: backend/documents/onboarding.pdf
 [INFO] Text loaded with length of: 38239 characters
 [INFO] Chunking text
-[INFO] Generated 60 chunks
+[INFO] Generated 99 chunks
 [INFO] Embedding chunks
+[INFO] Vector store and chunks saved.
