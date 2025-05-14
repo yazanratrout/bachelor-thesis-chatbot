@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 console_logger = logging.StreamHandler()
 console_logger.setLevel(logging.ERROR)
-file_logger = logging.FileHandler("C://Users//yratrout//bachelor-thesis-chatbot-template//bachelor-thesis-chatbot//backend//src//data_loader//embedding_store.log", mode='w')
+file_logger = logging.FileHandler("C://Users//hp//OneDrive//Desktop//bachelor-thesis-chatbot//backend//src//data_loader//embedding_store.log", mode='w')
 file_logger.setLevel(logging.INFO)
 logging.basicConfig(
     format='[%(levelname)s] %(message)s',

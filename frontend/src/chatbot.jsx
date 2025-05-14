@@ -11,13 +11,15 @@ function Chatbot() {
     setLoading(true);
     try {
       const response = await fetch(`http://localhost:8000/search?query=${encodeURIComponent(query)}`);
+      if (!response.ok) throw new Error('Backend error');
       const data = await response.json();
-      setResults(data.results);
+      setResults(data.results || []);
     } catch (error) {
       console.error('Search failed:', error);
-      setResults(["Error fetching results"]);
+      setResults(["Something went wrong. Please try again."]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
