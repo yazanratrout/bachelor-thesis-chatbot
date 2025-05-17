@@ -1,5 +1,3 @@
-# backend/source/create_vector_store.py
-
 import os
 import faiss
 import json
