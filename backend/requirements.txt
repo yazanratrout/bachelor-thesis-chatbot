@@ -1,0 +1,27 @@
+# Core dependencies
+fastapi==0.110.1
+uvicorn[standard]==0.29.0
+
+# For parsing and preprocessing documents
+PyMuPDF==1.23.18   # For reading PDF files (fitz)
+nltk==3.8.1
+
+# Semantic search
+sentence-transformers==2.6.1
+faiss-cpu==1.7.4
+
+# Data handling
+pydantic==2.6.4
+numpy==1.26.4
+scikit-learn==1.4.2
+
+# For serialization
+joblib==1.4.0
+
+# CORS for frontend/backend communication
+python-multipart==0.0.9
+aiofiles==23.2.1
+requests==2.31.0
+
+# For logging and dev utilities
+loguru==0.7.2
