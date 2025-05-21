@@ -25,3 +25,7 @@ requests==2.31.0
 
 # For logging and dev utilities
 loguru==0.7.2
+
+
+langchain
+langchain-core

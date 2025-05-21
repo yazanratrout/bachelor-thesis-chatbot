@@ -19,5 +19,6 @@ index, chunks = load_vector_store()
 def search(query: str, top_k: int = 5):
     query_embedding = embedding_model.encode([query], convert_to_numpy=True)
     D, I = index.search(query_embedding, top_k)
-    results = [chunks[i] for i in I[0]]
+    results = [
+    chunks[i]["page_content"] if isinstance(chunks[i], dict) else chunks[i] for i in I[0]]
     return {"results": results}

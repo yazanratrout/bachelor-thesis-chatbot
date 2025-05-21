@@ -1,34 +1,39 @@
-import os
-import faiss
-import json
-from sentence_transformers import SentenceTransformer
-from data_loader.preprocessing import preprocess_pdf
+# import os
+# import json
+# import faiss
+# from sentence_transformers import SentenceTransformer
+# from data_loader.preprocessing import preprocess_pdf
 
-# Config
-DOCS_PATH = "data/Onboarding.pdf"
-VECTOR_STORE_PATH = "backend/vector_store"
-os.makedirs(VECTOR_STORE_PATH, exist_ok=True)
+# # --- Config ---
+# DOCS_PATH = "data/Onboarding.pdf"
+# VECTOR_STORE_PATH = "backend/vector_store"
+# MODEL_NAME = "all-MiniLM-L6-v2"
+# os.makedirs(VECTOR_STORE_PATH, exist_ok=True)
 
-# Load PDF and chunk it
-chunks = preprocess_pdf(DOCS_PATH)
-for chunk in chunks:
-    if 'embedding' in chunk:
-        chunk['embedding'] = chunk['embedding'].tolist()
+# # --- Load and chunk PDF ---
+# print(f"Loading and preprocessing PDF: {DOCS_PATH}")
+# documents = preprocess_pdf(DOCS_PATH)
 
-# Embed using SentenceTransformer
-model = SentenceTransformer('all-MiniLM-L6-v2')
-embeddings = model.encode(chunks, show_progress_bar=True)
+# # --- Extract page content and metadata ---
+# texts = [doc.page_content for doc in documents]
+# metadata = [doc.metadata for doc in documents]
+# chunk_dicts = [{"page_content": text, "metadata": meta} for text, meta in zip(texts, metadata)]
 
-# Create and save FAISS index
-dimension = embeddings.shape[1]
-index = faiss.IndexFlatL2(dimension)
-index.add(embeddings)
+# # --- Embedding ---
+# print("Embedding chunks...")
+# model = SentenceTransformer(MODEL_NAME)
+# embeddings = model.encode(texts, show_progress_bar=True)
 
-faiss.write_index(index, os.path.join(VECTOR_STORE_PATH, "vector.index"))
+# # --- FAISS Index ---
+# print("Building FAISS index...")
+# dimension = embeddings.shape[1]
+# faiss.normalize_L2(embeddings)
+# index = faiss.IndexFlatIP(dimension)
+# index.add(embeddings)
+# faiss.write_index(index, os.path.join(VECTOR_STORE_PATH, "vector.index"))
 
-# Save chunks metadata for search responses as JSON
-with open(os.path.join(VECTOR_STORE_PATH, "chunks.json"), "w", encoding="utf-8") as f:
-    json.dump(chunks, f, ensure_ascii=False, indent=2)
+# # --- Save chunks with metadata ---
+# with open(os.path.join(VECTOR_STORE_PATH, "chunks.json"), "w", encoding="utf-8") as f:
+#     json.dump(chunk_dicts, f, ensure_ascii=False, indent=2)
 
-
-print("Vector store created successfully.")
+# print("Vector store created and saved.")
