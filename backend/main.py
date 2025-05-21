@@ -10,8 +10,14 @@ if __name__ == "__main__":
     embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
     index, chunks = load_vector_store()
 
+    # Static example query
     query = "what should I do in case I lost the access chip?"
     results = search_query(query, index, chunks, embedding_model)
+
     logger.info("Top matching chunks:")
     for i, chunk in enumerate(results):
-        print(f"{i + 1}. {chunk}")
+        source = chunk["metadata"].get("source", "unknown")
+        content_preview = chunk["page_content"].strip().replace("\n", " ")[:450] + "..."
+        print(f"\nResult {i + 1}:")
+        print(f"Source: {source}")
+        print(f"Content: {content_preview}")
