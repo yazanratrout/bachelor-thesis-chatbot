@@ -27,3 +27,6 @@ backend/vector_store/
 
 # Ignore environment files
 .env
+
+# Ignore node_modules folder
+node_modules/
