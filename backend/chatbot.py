@@ -17,7 +17,6 @@ def clean_text(text: str) -> str:
     text = re.sub(r'[ \t]+', ' ', text)
     return text.strip()
 
-
 use_reranker = True
 def answer_question(query: str, top_k: int = 1) -> str:
     """

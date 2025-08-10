@@ -41,14 +41,3 @@ def preprocess_pdfs(file_paths, chunk_size=700, chunk_overlap=150):
         all_chunks.extend(chunks)
         logger.info(f"Chunked '{path}' into {len(chunks)} chunks")
     return all_chunks
-
-# For local testing
-if __name__ == "__main__":
-    pdfs_folder = "data"
-    pdf_files = [os.path.join(pdfs_folder, f) for f in os.listdir(pdfs_folder) if f.endswith(".pdf")]
-    
-    if not pdf_files:
-        logger.warning("No PDF files found in the 'data' folder.")
-    else:
-        chunks = preprocess_pdfs(pdf_files)
-        print(f"\nFirst chunk:\n{chunks[0]}")

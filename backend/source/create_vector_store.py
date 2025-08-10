@@ -13,7 +13,6 @@ def create_vector_store(model_name, output_dir=VECTOR_STORE_PATH):
 
     print(f"Loading and preprocessing all PDFs in: data")
     pdf_files = [os.path.join(DOCS_DIR, f) for f in os.listdir(DOCS_DIR) if f.lower().endswith(".pdf")]
-
     if not pdf_files:
         raise FileNotFoundError("No PDF files found in the data directory!")
 

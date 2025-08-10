@@ -1,8 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-import numpy as np
-from ast import literal_eval
 
 
 # Path to evaluation files
