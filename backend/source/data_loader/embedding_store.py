@@ -10,6 +10,11 @@ def load_vector_store(store_path=VECTOR_STORE_PATH):
     """
     index_path = os.path.join(store_path, "vector.index")
     chunks_path = os.path.join(store_path, "chunks.json")
+    if not os.path.exists(index_path):
+        raise FileNotFoundError(f"FAISS index not found at {index_path}")
+    if not os.path.exists(chunks_path):
+        raise FileNotFoundError(f"Chunks file not found at {chunks_path}")
+
     index = faiss.read_index(index_path)
     with open(chunks_path, "r", encoding="utf-8") as f:
         chunk_dicts = json.load(f)
@@ -19,7 +24,10 @@ def search_query(query, index, chunks, embedding_model, k=3):
     """
     Performs semantic search over the vector store.
     """
-    query_embedding = embedding_model.encode([query], convert_to_numpy=True)
+    query_embedding = embedding_model.encode([query], convert_to_numpy=True).astype('float32')
     faiss.normalize_L2(query_embedding)
     D, I = index.search(query_embedding, k)
-    return [chunks[i] for i in I[0]]
+    scores = [float(s) for s in D[0]]
+    results = [chunks[i] for i in I[0]]
+
+    return scores, results

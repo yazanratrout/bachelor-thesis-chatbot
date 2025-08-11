@@ -24,15 +24,17 @@ def create_vector_store(model_name, output_dir=VECTOR_STORE_PATH):
 
     print(f"Embedding with model: {model_name}")
     model = SentenceTransformer(model_name)
-    embeddings = model.encode(texts, convert_to_numpy=True, show_progress_bar=True)
+    embeddings = model.encode(texts, convert_to_numpy=True, show_progress_bar=True).astype("float32")
 
     print("Building FAISS index...")
     faiss.normalize_L2(embeddings)
     index = faiss.IndexFlatIP(embeddings.shape[1])
     index.add(embeddings)
-    faiss.write_index(index, os.path.join(output_dir, "vector.index"))
+    index_path = os.path.join(output_dir, "vector.index")
+    chunks_path = os.path.join(output_dir, "chunks.json")
+    faiss.write_index(index, index_path)
 
-    with open(os.path.join(output_dir, "chunks.json"), "w", encoding="utf-8") as f:
+    with open(chunks_path, "w", encoding="utf-8") as f:
         json.dump(chunk_dicts, f, ensure_ascii=False, indent=2)
 
     print(f"Vector store created at {output_dir}")

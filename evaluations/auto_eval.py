@@ -34,12 +34,12 @@ for model_name, store_path in models.items():
     embedding_model = SentenceTransformer(model_name)
     index, chunks = load_vector_store(store_path)
 
-    df = pd.read_excel(os.path.join(os.path.dirname(__file__), "Retrieval_Chatbot_Evaluation_Template_direct_questions.xlsx"))
+    df = pd.read_excel(os.path.join(os.path.dirname(__file__), "Retrieval_Chatbot_Evaluation_Template_indirect_questions.xlsx"))
     top1_results = []
 
     for i, row in df.iterrows():
         query = str(row["User Query"])
-        results = search_query(query, index, chunks, embedding_model, k=5)
+        _, results = search_query(query, index, chunks, embedding_model, k=5)
         top_k_texts = [r["page_content"] for r in results]
 
         top1 = top_k_texts[0] if top_k_texts else ""
@@ -105,7 +105,7 @@ for model_name, store_path in models.items():
     df["Reciprocal Rank (MRR component)"] = rr_list
 
     # Save evaluation
-    out_file = os.path.join("evaluations//direct-questions-evaluation", f"Evaluation_{model_name.replace('/', '_')}_direct_questions.xlsx")
+    out_file = os.path.join("evaluations//indirect-questions-evaluation", f"Evaluation_{model_name.replace('/', '_')}_indirect_questions.xlsx")
     df.to_excel(out_file, index=False)
     print(f"Saved model results to: {out_file}")
 
@@ -173,6 +173,6 @@ for model_name, store_path in models.items():
 
 # Save summary table
 summary_df = pd.DataFrame(summary_rows)
-summary_df.to_excel(os.path.join("evaluations//direct-questions-evaluation", "Model_Comparison_Summary_direct_questions.xlsx"), index=False)
+summary_df.to_excel(os.path.join("evaluations//indirect-questions-evaluation", "Model_Comparison_Summary_indirect_questions.xlsx"), index=False)
 print("\nAll evaluations completed.")
 print("Saved summary to Model_Comparison_Summary.xlsx")
