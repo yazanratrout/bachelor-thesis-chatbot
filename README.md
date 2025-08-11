@@ -1,162 +1,181 @@
+# Information Retrieval Chatbot (Thesis Project)
 
-# 📚 Information Retrieval Chatbot (Bachelor Thesis)
-
-This project is a closed-domain **information retrieval chatbot** that answers questions based on internal PDF documentation using extractive chunk-based semantic search.
-
-Designed for:
-- Lightweight, private document QA
-- Easy evaluation across multiple embedding models
-- Integration of **LLM-as-a-judge** for scoring relevance and correctness
+A lightweight, **retrieval-based** chatbot that answers questions from an internal corpus of PDFs.
+It uses Sentence-Transformers embeddings + FAISS for fast similarity search and (optionally) a cross-encoder **reranker**. A Streamlit UI provides an easy front end for demos.
 
 ---
 
-## 🚀 Features
+## Features
 
-- 🔍 **Semantic Search** with Sentence Transformers & FAISS
-- 📄 **Chunk-based Retrieval** (no LLM generation)
-- ⚙️ **FastAPI Backend**, 🌐 **React Frontend**
-- 📊 **Evaluation Tools**: Top-1, Precision@k, MRR, and LLM Judging
-- 🧠 Supports multiple embedding models
-- 🔐 Works offline / private-doc compliant
+- **Document ingestion**: PDF parsing and chunking with LangChain splitters
+- **Vector search**: FAISS index with **cosine similarity** (via Inner Product on L2-normalized vectors)
+- **Multiple embedding models**: switch live in the UI
+- **Reranking**: toggle a cross-encoder reranker on/off
+- **Evaluation tooling**: templates, auto-eval script(s), and plotting utilities
+- **Streamlit UI**: sidebar controls + answer source display (and optional similarity score)
+
+> **First run requires internet** (to download models to cache). Afterwards it works offline using the local cache. Alternatively, you can bundle the Hugging Face model cache for fully offline use.
 
 ---
 
-## 🗂️ Folder Structure
+## Repository Structure (key parts)
 
 ```
-bachelor-thesis-chatbot/
-├── backend/
-│   ├── source/
-│   │   ├── api.py
-│   │   ├── create_vector_store.py
-│   │   └── data_loader/
-│   │       ├── embedding_store.py
-│   │       └── preprocessing.py
-│   ├── vector_store/             # FAISS index + metadata
-│   ├── main.py
-│   └── requirements.txt
-│
-├── data/
-│   └── *.pdf                    # Documents to embed
-│
-├── evaluations/
-│   ├── evaluate_with_llm_judge.py  # Evaluation via GPT or Together
-│   ├── auto_eval.py
-│   ├── retrieval_eval.py
-│   ├── Retrieval_Chatbot_Evaluation_Template.xlsx
-│   ├── Evaluation_*.xlsx       # Evaluation results per model
-│   ├── Model_Comparison_Summary.xlsx
-│   ├── Model_Performance_Comparison.png
-│   └── *_qa.json               # Evaluation question sets
-│
-├── frontend/
-│   ├── src/
-│   │   ├── App.jsx
-│   │   └── Chatbot.jsx
-│   ├── index.html
-│   ├── package.json
-│   └── vite.config.js
-│
-├── .gitignore
-└── README.md
+backend/
+  ├─ chatbot.py                    # model selection, retrieval, reranker hook
+  ├─ reranker.py                   # cross-encoder reranker
+  └─ source/
+     ├─ create_vector_store.py     # build FAISS indexes for all models
+     └─ data_loader/
+        ├─ preprocessing.py        # PDF reading + chunking
+        └─ embedding_store.py      # load/search vector stores
+ui/
+  └─ app.py                        # Streamlit chat UI
+evaluations/
+  ├─ Retrieval_Chatbot_Evaluation_Template_direct_questions.xlsx
+  ├─ Retrieval_Chatbot_Evaluation_Template_indirect_questions.xlsx
+  ├─ direct-questions-evaluation/  # results + plots
+  ├─ indirect-questions-evaluation/# results + plots
+  ├─ plot_model_comparison.py
+  └─ plot_metrics_comparison.py
+data/                               # place your PDFs here
+backend/vector_store/               # generated indexes (one subfolder per model)
+icons/                              # optional bot avatars for the UI
 ```
 
 ---
 
-## 🛠️ Getting Started
+## Environment & Requirements
 
-### 1. ✅ Backend
+- **Tested with**: Python **3.12** on Windows 11
+- Create and activate a virtual environment, then install deps:
+  ```bash
+  python -m venv venv
+  # Windows
+  venv\Scripts\activate
+  # macOS/Linux
+  # source venv/bin/activate
+
+  python -m pip install --upgrade pip
+  pip install -r requirements.txt
+  ```
+
+### Notes on dependencies
+
+- `sentence-transformers`, `faiss-cpu`, `PyMuPDF`, `numpy`, `streamlit`, `langchain`, `langchain-core`
+- `pandas`, `matplotlib`, `rapidfuzz` for evaluation/plots
+- `together` only if you use the LLM judge script
+- If you append to Excel files in evaluation: **`openpyxl`** is required (already suggested in `requirements.txt` comments)
+
+---
+
+## Model Options (Why these four?)
+
+All four are widely used Sentence-Transformers that balance quality vs. speed/size:
+
+- **all-MiniLM-L6-v2** — small & fast baseline, great latency for demos.
+- **multi-qa-MiniLM-L6-cos-v1** — tuned for **question–answer** retrieval; often improves recall for natural questions.
+- **all-mpnet-base-v2** — larger & stronger general semantic model; better quality but heavier.
+- **paraphrase-MiniLM-L6-v2** — robust on paraphrase/similarity; good fallback for varied phrasing.
+
+Each model gets its own FAISS store under `backend/vector_store/`.
+
+---
+
+## Build Vector Stores (one-time or after changing data/chunking)
+
+> **Requires internet on the first run** to download models. Re-run whenever you add PDFs or change chunking.
+
+From the repo root:
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate   # On Windows: .\venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn source.api:app --reload
+# Remove old stores if switching similarity settings or chunking
+# Windows:
+# rmdir /s /q backend\vector_store
+# mkdir backend\vector_store
+# macOS/Linux:
+# rm -rf backend/vector_store && mkdir -p backend/vector_store
+
+# Build all four indexes
+python -m backend.source.create_vector_store
 ```
 
-### 2. ✅ Frontend
+What this does:
+- Parses PDFs in `data/`
+- Splits into chunks
+- Computes embeddings and **L2-normalizes** them
+- Stores them in a FAISS **IndexFlatIP** (so inner product == cosine similarity on unit vectors)
+- Writes `vector.index` and `chunks.json` per model
+
+---
+
+## Run the Chatbot UI
+
+You can use the provided `run.bat` on Windows, or run Streamlit manually:
+
 ```bash
-cd frontend
-npm install
-npm run dev
+streamlit run ui/app.py
 ```
 
----
-
-## ⚙️ Configuration
-
-You can set `.env` variables to control:
-- Model name (e.g. `multi-qa-MiniLM-L6-cos-v1`)
-- Embedding paths
-- Optional OpenAI / Together API keys for evaluation
+### UI Controls (sidebar)
+- **Embedding model**: switch between the four stores live
+- **Top-k candidates**: choose how many FAISS hits to consider
+- **Use reranker**: on/off (cross-encoder reranks the top-k texts)
+- **Show similarity score**: optionally display cosine similarity under answers
+- Answers also show the **Source** filename of the retrieved chunk
 
 ---
 
-## 📊 Evaluation System
+## Retrieval Details (important for the thesis)
 
-Supports both automatic and LLM-based evaluation:
-- ✅ Top-1 Accuracy
-- ✅ Precision@k
-- ✅ Recall@k
-- ✅ Mean Reciprocal Rank (MRR)
-- ✅ Optional Human Ratings
-- ✅ LLM-as-a-Judge (GPT-3.5, GPT-4, LLaMA via Together)
-
-📂 Results are stored in:
-- `Evaluation_*.xlsx` — per model
-- `Model_Comparison_Summary.xlsx` — score overview
-- `Model_Performance_Comparison.png` — bar chart
-
-### LLM Evaluation Output
-| Query | Retrieved Answer | Reference | Relevance | Correctness | Completeness | Justification |
-|-------|------------------|-----------|-----------|-------------|--------------|----------------|
+- **Cosine similarity** is implemented as **Inner Product** on **L2-normalized** embeddings:
+  - Build time: normalize all corpus vectors and store in `IndexFlatIP`
+  - Query time: normalize the query vector before searching
+  - FAISS distances `D` are cosine similarities in `[-1, 1]`
+- This ensures **consistent top-k ordering** across code paths (UI and evaluation scripts).
 
 ---
 
-## 🔐 Privacy and Security
+## Evaluation & Plots
 
-- All embeddings and documents stay local
-- No generation or logging of user queries
-- Evaluation with external LLMs (optional) can be toggled
-- `.gitignore` includes all raw documents and vector stores
+1) Prepare your question sets in the `.xlsx` templates under `evaluations/`:
+   - `Retrieval_Chatbot_Evaluation_Template_direct_questions.xlsx`
+   - `Retrieval_Chatbot_Evaluation_Template_indirect_questions.xlsx`
 
----
+2) Run the **auto-eval** script(s) (direct/indirect). Example for direct:
+   ```bash
+   # Example; adjust to your script name/path if different
+   python evaluations/auto_eval_direct.py
+   ```
+   This will produce per-model results in:
+   - `evaluations/direct-questions-evaluation/`
+   - and write a summary table (Precision@k, Recall@k, MRR, etc.)
 
-## 🧠 Bachelor Thesis Context
+3) Generate plots:
+   ```bash
+   python evaluations/plot_model_comparison.py
+   python evaluations/plot_metrics_comparison.py
+   ```
+   Plots are written alongside the evaluation spreadsheets (direct & indirect folders).
 
-This chatbot is the core of a Bachelor's thesis on:
-> **"Design and Evaluation of a Lightweight, Private Information Retrieval Chatbot with LLM-based Automated Scoring"**
-
-Goals:
-- Avoid full LLM deployment
-- Focus on chunk-based retrieval
-- Enable automated, scalable evaluation
-
----
-
-## 📌 Future Improvements
-
-- [ ] Add RAG + LLM generation fallback for unseen queries
-- [ ] Streamlit-based leaderboard dashboard
-- [ ] Embedding quality visualization
+> If you append new sheets to an existing Excel file, make sure **`openpyxl`** is installed.
 
 ---
 
-## 🧪 Example Embedding Models Tested
+## Secrets & Offline Use
 
-- `multi-qa-MiniLM-L6-cos-v1`
-- `all-MiniLM-L6-v2`
-- `all-mpnet-base-v2`
-- `paraphrase-MiniLM-L6-v2`
-
-Each model was evaluated using both retrieval metrics and LLM-based ratings.
+- Create a local `.env`. Example:
+  ```dotenv
+  # .env.example
+  TOGETHER_API_KEY=
+  DEBUG=true
+  ```
+- If you use the LLM judge, set `TOGETHER_API_KEY` locally.
+- For **offline** operation, run once online to populate your Hugging Face cache (models will be used from cache afterwards).
 
 ---
 
-## 🤝 Credits
+## Troubleshooting
 
-Built with:
-- [SentenceTransformers](https://www.sbert.net/)
-- [FAISS](https://github.com/facebookresearch/faiss)
-- [FastAPI](https://fastapi.tiangolo.com/)
-- [React](https://reactjs.org/)
+- **No PDFs found**: ensure your files are in `data/` and have the `.pdf` extension.
+- **Index/search mismatch**: if you change chunking or similarity settings, **rebuild** all vector stores.
+- **Excel writing errors**: install `openpyxl`.
