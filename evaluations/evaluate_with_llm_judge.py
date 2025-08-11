@@ -11,10 +11,10 @@ os.environ["TOGETHER_API_KEY"] = os.getenv("TOGETHER_API_KEY")
 client = Together()
 
 excel_files = [
-    "evaluations/direct-questions-evaluation/Evaluation_all-MiniLM-L6-v2_direct_questions.xlsx",
-    "evaluations/direct-questions-evaluation/Evaluation_all-mpnet-base-v2_direct_questions.xlsx",
-    "evaluations/direct-questions-evaluation/Evaluation_multi-qa-MiniLM-L6-cos-v1_direct_questions.xlsx",
-    "evaluations/direct-questions-evaluation/Evaluation_paraphrase-MiniLM-L6-v2_direct_questions.xlsx"
+    "evaluations/indirect-questions-evaluation/Evaluation_all-MiniLM-L6-v2_indirect_questions.xlsx",
+    "evaluations/indirect-questions-evaluation/Evaluation_all-mpnet-base-v2_indirect_questions.xlsx",
+    "evaluations/indirect-questions-evaluation/Evaluation_multi-qa-MiniLM-L6-cos-v1_indirect_questions.xlsx",
+    "evaluations/indirect-questions-evaluation/Evaluation_paraphrase-MiniLM-L6-v2_indirect_questions.xlsx"
 ]
 
 def evaluate_with_llm(df, query_col, retrieved_col, reference_col, extra_cols=None):
@@ -51,7 +51,7 @@ def evaluate_with_llm(df, query_col, retrieved_col, reference_col, extra_cols=No
 
         try:
             response = client.chat.completions.create(
-                model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+                model="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
                 messages=[
                     {"role": "system", "content": "You are a careful evaluator of answer quality."},
                     {"role": "user", "content": prompt}
