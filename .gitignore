@@ -31,5 +31,4 @@ backend/vector_store/
 qa
 data
 *.xlsx
-icons
 llm_eval_cache_meta_llama_Llama_3_3_70B_Instruct_Turbo_Free.json

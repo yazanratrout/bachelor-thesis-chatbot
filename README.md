@@ -179,3 +179,9 @@ streamlit run ui/app.py
 - **No PDFs found**: ensure your files are in `data/` and have the `.pdf` extension.
 - **Index/search mismatch**: if you change chunking or similarity settings, **rebuild** all vector stores.
 - **Excel writing errors**: install `openpyxl`.
+
+
+## Attribution
+<a href="https://www.flaticon.com/free-icons/robot" title="robot icons">
+Robot icons created by Smashicons - Flaticon
+</a>

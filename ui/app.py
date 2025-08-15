@@ -1,3 +1,8 @@
+"""
+robot.png — Robot icons created by Smashicons - Flaticon
+https://www.flaticon.com/free-icons/robot
+"""
+
 import streamlit as st
 import sys
 import os
@@ -68,7 +73,7 @@ for chat in st.session_state.chat_history:
 if st.session_state.pending_bot_response:
     res = st.session_state.pending_bot_response  # dict {text, source, score}
 
-    with st.chat_message("assistant", avatar=os.path.join(parent_dir, "icons//bot1.jpg")):
+    with st.chat_message("assistant", avatar=os.path.join(parent_dir, "icons//bot.png")):
         typing_placeholder = st.empty()
         typing_placeholder.markdown("Typing...")
         time.sleep(0.5)
