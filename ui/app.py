@@ -100,7 +100,7 @@ st.markdown("""
 #chat-warning {
     position: fixed;
     bottom: 0.5rem;
-    left: 50%;
+    left: 55%;
     transform: translateX(-50%);
     font-size: 0.88rem;
     padding: 4px 10px;
