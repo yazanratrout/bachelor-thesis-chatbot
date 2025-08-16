@@ -182,6 +182,6 @@ streamlit run ui/app.py
 
 
 ## Attribution
-<a href="https://www.flaticon.com/free-icons/robot" title="robot icons">
+<a href="https://www.flaticon.com/free-icons/chatbot" title="chatbot icons">Chatbot icons created by juicy_fish - Flaticon</a>
 Robot icons created by Smashicons - Flaticon
 </a>

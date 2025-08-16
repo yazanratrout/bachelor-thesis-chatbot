@@ -1,6 +1,6 @@
 """
 robot.png — Robot icons created by Smashicons - Flaticon
-https://www.flaticon.com/free-icons/robot
+<a href="https://www.flaticon.com/free-icons/chatbot" title="chatbot icons">Chatbot icons created by juicy_fish - Flaticon</a>
 """
 
 import streamlit as st
