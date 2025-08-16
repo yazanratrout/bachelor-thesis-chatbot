@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import os
 
 # Path to evaluation files
-eval_dir = "evaluations//direct-questions-evaluation"
+eval_dir = "evaluations//indirect-questions-evaluation"
 eval_files = [f for f in os.listdir(eval_dir) if f.startswith("Evaluation_") and f.endswith(".xlsx")]
 
 # Define metrics as (base_col, rerank_col)
@@ -59,7 +59,7 @@ def plot_model_comparison(metric_dict, title, filename):
     plt.xticks([i + bar_width * 3 for i in x], model_names)
     plt.xlabel("Embedding Models")
     plt.ylabel("Score")
-    plt.title(title)
+    #plt.title(title)
     plt.ylim(0, 1)
     plt.legend()
     plt.tight_layout()
@@ -71,5 +71,5 @@ def plot_model_comparison(metric_dict, title, filename):
     print(f"✅ Saved plot: {output_path}")
 
 # Generate both comparison plots
-plot_model_comparison(base_metrics, "Model Performance Comparison (Without Reranker)", "plot_model_comparison_without_reranker_direct_questions.png")
-plot_model_comparison(rerank_metrics, "Model Performance Comparison (With Reranker)", "plot_model_comparison_with_reranker_direct_questions.png")
+plot_model_comparison(base_metrics, "Model Performance Comparison (Without Reranker)", "plot_model_comparison_without_reranker_indirect_questions.png")
+plot_model_comparison(rerank_metrics, "Model Performance Comparison (With Reranker)", "plot_model_comparison_with_reranker_indirect_questions.png")
