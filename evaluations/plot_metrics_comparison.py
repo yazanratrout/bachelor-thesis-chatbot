@@ -4,7 +4,7 @@ import os
 
 
 # Path to evaluation files
-eval_dir = "evaluations//indirect-questions-evaluation"
+eval_dir = "evaluations//direct-questions-evaluation"
 eval_files = [f for f in os.listdir(eval_dir) if f.startswith("Evaluation_") and f.endswith(".xlsx")]
 
 # Define metrics
@@ -44,15 +44,15 @@ for file in eval_files:
         plt.bar([i - width / 2 for i in x], values_base, width=width, label="Original", color="gray")
         plt.bar([i + width / 2 for i in x], values_rerank, width=width, label="Reranker", color="green")
 
-        plt.xticks(x, labels, rotation=45)
+        plt.xticks(x, labels, rotation=45, fontsize=14)
         plt.ylabel("Score")
         #plt.title(f"Performance Comparison for {model_name}")
         plt.ylim(0, 1)
-        plt.legend()
+        plt.legend(fontsize=12)
         plt.grid(axis='y', linestyle='--', alpha=0.6)
         plt.tight_layout()
 
-        output_path = os.path.join(eval_dir, f"plot_{model_name}_indirect_questions.png")
+        output_path = os.path.join(eval_dir, f"plot_{model_name}.png")
         plt.savefig(output_path)
         plt.close()
 
