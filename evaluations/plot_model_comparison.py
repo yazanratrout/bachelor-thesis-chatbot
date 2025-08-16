@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import os
 
 # Path to evaluation files
-eval_dir = "evaluations//direct-questions-evaluation"
+eval_dir = "evaluations//indirect-questions-evaluation"
 eval_files = [f for f in os.listdir(eval_dir) if f.startswith("Evaluation_") and f.endswith(".xlsx")]
 
 # Define metrics as (base_col, rerank_col)
@@ -25,7 +25,7 @@ rerank_metrics = {label: [] for label in metric_labels}
 
 # Read and process each file
 for file in eval_files:
-    model_name = file.replace("Evaluation_", "").replace(".xlsx", "").replace("_direct_questions", "")
+    model_name = file.replace("Evaluation_", "").replace(".xlsx", "").replace("_indirect_questions", "")
     model_names.append(model_name)
 
     file_path = os.path.join(eval_dir, file)
@@ -56,12 +56,12 @@ def plot_model_comparison(metric_dict, title, filename):
             color=color_palette[idx % len(color_palette)]
         )
 
-    plt.xticks([i + bar_width * 3 for i in x], model_names)
+    plt.xticks([i + bar_width * 3 for i in x], model_names, fontsize=16)
     plt.xlabel("Embedding Models")
     plt.ylabel("Score")
     #plt.title(title)
     plt.ylim(0, 1)
-    plt.legend()
+    plt.legend(fontsize=11)
     plt.tight_layout()
     plt.grid(axis='y', linestyle='--', alpha=0.5)
 
@@ -71,5 +71,5 @@ def plot_model_comparison(metric_dict, title, filename):
     print(f"✅ Saved plot: {output_path}")
 
 # Generate both comparison plots
-plot_model_comparison(base_metrics, "Model Performance Comparison (Without Reranker)", "plot_model_comparison_without_reranker_direct_questions.png")
-plot_model_comparison(rerank_metrics, "Model Performance Comparison (With Reranker)", "plot_model_comparison_with_reranker_direct_questions.png")
+plot_model_comparison(base_metrics, "Model Performance Comparison (Without Reranker)", "plot_model_comparison_without_reranker_indirect_questions.png")
+plot_model_comparison(rerank_metrics, "Model Performance Comparison (With Reranker)", "plot_model_comparison_with_reranker_indirect_questions.png")
