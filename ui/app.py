@@ -1,8 +1,3 @@
-"""
-robot.png — Robot icons created by Smashicons - Flaticon
-<a href="https://www.flaticon.com/free-icons/chatbot" title="chatbot icons">Chatbot icons created by juicy_fish - Flaticon</a>
-"""
-
 import streamlit as st
 import sys
 import os
